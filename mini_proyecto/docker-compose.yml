@@ -1,0 +1,37 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres16_bdcurso
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: curso_bd
+      POSTGRES_USER: curso_user
+      POSTGRES_PASSWORD: curso_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./biblioteca.sql:/docker-entrypoint-initdb.d/biblioteca.sql
+    networks:
+      - bd_network
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: pgadmin_bdcurso
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@curso.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "6060:80"
+    depends_on:
+      - postgres
+    networks:
+      - bd_network
+
+volumes:
+  postgres_data:
+
+networks:
+  bd_network:
+    driver: bridge
